@@ -1,0 +1,30 @@
+# Entornos
+.env
+*.env
+
+# Logs
+*.log
+*.csv
+
+# Salidas del proyecto
+/output_*/  
+*.txt
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# .gitignore
+venv/
+__pycache__/
+*.pyc
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos temporales de Excel
+~$*.xlsx
+~$*.xls
+
+# Historial de procesamiento (contiene datos sensibles)
+historial_procesamiento.csv
