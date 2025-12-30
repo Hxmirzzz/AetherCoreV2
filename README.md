@@ -84,7 +84,7 @@ AetherCore 2 implementa un sistema de procesamiento de datos en tres etapas:
 - **Auditable**: Registra en logs todas las transformaciones realizadas
 - **Preservación de datos**: Si no existe mapeo, mantiene el valor original
 
-#### Ejemplo de Mapeos Actuales (PROCESAMIENTO - TIPO_SERVICIO):
+#### Ejemplo de Mapeos Actuales (PROCESAMIENTO - NOMBRE_TIPO_SERVICIO):
 ```
 Origen (Excel)                           → Destino (TXT)
 ─────────────────────────────────────────────────────────────
@@ -120,7 +120,7 @@ Para agregar o modificar mapeos de datos, edita el archivo `src/core/data_mappin
 ```python
 MAPEOS_DATOS = {
     "PROCESAMIENTO": {
-        "TIPO_SERVICIO": {
+        "NOMBRE_TIPO_SERVICIO": {
             "VALOR_ORIGEN_1": "VALOR_DESTINO_1",
             "VALOR_ORIGEN_2": "VALOR_DESTINO_2",
             # Agregar más mapeos aquí...
@@ -133,7 +133,7 @@ MAPEOS_DATOS = {
     },
     "TRANSPORTE": {
         # Mapeos futuros para la hoja Transporte
-        "TIPO_SERVICIO": {
+        "NOMBRE_TIPO_SERVICIO": {
             "ORIGEN_X": "DESTINO_X",
         }
     }

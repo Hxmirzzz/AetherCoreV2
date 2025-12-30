@@ -8,7 +8,7 @@ por lo que los valores de origen deben incluir tildes y caracteres especiales si
 
 MAPEOS_DATOS = {
     "PROCESAMIENTO": {
-        "TIPO_SERVICIO": {
+        "NOMBRE_TIPO_SERVICIO": {
             # ALMACENAMIENTO
             "ALMACENAMIENTO BILLETE": "ALMACENAMIENTO",
             "ALMACENAMIENTO MONEDA": "ALMACENAMIENTO",
@@ -27,7 +27,7 @@ MAPEOS_DATOS = {
     "TRANSPORTE": {
         # Aquí se pueden agregar mapeos para TRANSPORTE en el futuro
         # Ejemplo:
-        # "TIPO_SERVICIO": {
+        # "NOMBRE_TIPO_SERVICIO": {
         #     "VALOR_ORIGEN": "VALOR_DESTINO",
         # },
     }
