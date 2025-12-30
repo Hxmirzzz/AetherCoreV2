@@ -14,7 +14,7 @@ def clean_text(value: str) -> str:
 
     value = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
     value = re.sub(r"[\r\n\t]", " ", value)
-    value = re.sub(r"[^A-Za-z0-9\s\-.,#()/]", "", value)
+    value = re.sub(r"[^A-Za-z0-9\s\-.,#()/|]", "", value)
     value = re.sub(r"\s+", " ", value).strip()
 
     return value

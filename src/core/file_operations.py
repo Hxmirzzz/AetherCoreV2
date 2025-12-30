@@ -10,6 +10,7 @@ def save(df, tipo_hoja, file_name):
     """
     Guarda el DataFrame como archivo .txt en la ruta correspondiente, basada en el tipo.
     Aplica formatos de fecha, numéricos y decimales según especificación.
+    Excluye columnas configuradas en EXCLUDED_FROM_EXPORT para cada tipo de hoja.
     """
     tipo_hoja = tipo_hoja.upper()
     validate_schema(df, tipo_hoja)
@@ -27,5 +28,8 @@ def save(df, tipo_hoja, file_name):
     df = transform_dataframe(df, tipo_hoja, formatos)
     validate_column_types(df, formatos, tipo_hoja)
     output_path = get_output_path(tipo_hoja, file_name)
-    export_to_txt(df, output_path, formatos)
+    
+    # Pasar tipo_hoja al writer para que aplique las exclusiones
+    export_to_txt(df, output_path, formatos, tipo_hoja)
+    
     return output_path
