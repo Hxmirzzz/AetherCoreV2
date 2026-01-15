@@ -44,9 +44,9 @@ def get_dynamic_paths():
     for ruta in [entrada, salida_proc, salida_trans]:
         os.makedirs(ruta, exist_ok=True)
         
-        return {
-            "entrada": entrada,
-            "salida_proc": salida_proc,
-            "salida_trans": salida_trans,
-            "date_str": date_str
-        }
+    return {
+        "entrada": entrada,
+        "salida_proc": salida_proc,
+        "salida_trans": salida_trans,
+        "date_str": date_str
+    }
