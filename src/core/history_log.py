@@ -1,8 +1,15 @@
 import csv
 import os
+import sys
+from pathlib import Path
 from datetime import datetime
 
-HISTORY_FILE = os.path.join("logs", "historial_procesamiento.csv")
+if getattr(sys, 'frozen', False):
+    BASE_DIR = Path(sys.executable).parent
+else:
+    BASE_DIR = Path(__file__).resolve().parents[2]
+
+HISTORY_FILE = os.path.join(BASE_DIR, "logs", "historial_procesamiento.csv")
 
 def log_history(
     nombre_archivo: str,

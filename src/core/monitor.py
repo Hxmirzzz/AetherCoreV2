@@ -16,19 +16,26 @@ class EventoDeEntrada(FileSystemEventHandler):
     """
     def __init__(self, entrada_path):
         self.entrada_path = entrada_path
-        
-    def on_created(self, event):
+
+    def _procesar(self, event, tipo_evento):
+        """Método interno para validar y procesar el archivo."""
         if not event.is_directory and event.src_path.lower().endswith(".xlsx") and "~$" not in event.src_path:
             time.sleep(1)
             try:
                 logger.info(f"Detectado nuevo archivo: {event.src_path}")
-
-                rutas = get_dynamic_paths()
                 process_xlsx_file(
                     event.src_path
                 )
             except Exception as e:
                 logger.error(f"Error al procesar archivo {event.src_path}: {e}")
+        
+    def on_created(self, event):
+        """Se activa al pegar o mover un archivo nuevo a la carpeta."""
+        self._procesar(event, "CREACION")
+
+    def on_modified(self, event):
+        """Se activa al guardar cambios en un archivo existente."""
+        self._procesar(event, "MODIFICACION")
                 
 def iniciar():
     """
@@ -48,5 +55,9 @@ def iniciar():
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
+        logger.info("Deteniendo el monitor...")
         observer.stop()
+    except Exception as e:
+        logger.error(f"Error inesperado en el monitor: {e}")
+    
     observer.join()

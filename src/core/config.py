@@ -1,9 +1,15 @@
 import os
+import sys
 from datetime import datetime
 from dotenv import load_dotenv
 from pathlib import Path
 
-env_path = Path(__file__).resolve().parents[2] / '.env'
+if getattr(sys, 'frozen', False):
+    BASE_DIR = Path(sys.executable).parent
+else:
+    BASE_DIR = Path(__file__).resolve().parents[2]
+
+env_path = BASE_DIR / '.env'
 load_dotenv(dotenv_path=env_path)
 
 BASE_PATH = os.getenv("FACTURACION_BASE_PATH", "C:/Facturacion")

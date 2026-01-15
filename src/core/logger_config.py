@@ -1,5 +1,7 @@
 import os
 import logging
+import sys
+from pathlib import Path
 from logging.handlers import RotatingFileHandler
 from dotenv import load_dotenv
 
@@ -24,7 +26,12 @@ def setup_logger(name='AetherLogger'):
         console_handler.setFormatter(log_format)
         logger.addHandler(console_handler)
         
-        log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs')
+        if getattr(sys, 'frozen', False):
+            BASE_DIR = Path(sys.executable).parent
+        else:
+            BASE_DIR = Path(__file__).resolve().parents[2]
+        
+        log_dir = os.path.join(BASE_DIR, 'logs')
         os.makedirs(log_dir, exist_ok=True)
         
         file_handler = RotatingFileHandler(

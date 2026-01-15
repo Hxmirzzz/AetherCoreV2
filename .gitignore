@@ -28,3 +28,11 @@ Thumbs.db
 
 # Historial de procesamiento (contiene datos sensibles)
 historial_procesamiento.csv
+
+# PyInstaller (Compilación)
+build/
+dist/
+*.spec
+
+# Binarios externos
+nssm.exe

@@ -2,107 +2,77 @@
 
 ## Descripción
 
-**AetherCore 2** es una aplicación modular en Python diseñada para:
-
-- Monitorear una carpeta de entrada en tiempo real.
-- Procesar archivos `.xlsx` con conceptos de **Procesamiento** y **Transporte**.
-- Aplicar limpieza avanzada de datos eliminando tildes, caracteres especiales y normalizando texto.
-- Generar automáticamente archivos `.txt` separados por tipo, respetando formatos estrictos y codificación UTF-8.
-- Mantener un registro detallado de eventos y errores.
-- Cumplir principios SOLID para fácil mantenimiento y extensibilidad.
+**AetherCore 2** es una herramienta profesional para el monitoreo y procesamiento automático de archivos bancarios. Diseñada para funcionar de forma autónoma como un servicio de Windows, transforma archivos .xlsx en formatos .txt estandarizados sin intervención humana.
 
 ---
 
-## Funcionalidades
+## Funcionalidades Principales
 
-### Procesamiento de Datos
-- Lee archivos `.xlsx` desde la carpeta de entrada.
-- Aplica formato limpio y validaciones por tipo de dato (`fecha`, `decimal2`, `decimal4`, `porcentaje`, etc.).
-- **Limpieza avanzada de texto**: Elimina automáticamente tildes, diacríticos y caracteres especiales de columnas de texto, manteniendo la integridad de datos numéricos y fechas.
-- Convierte porcentajes, fechas y decimales al formato exigido.
-- Valida columnas requeridas y columnas críticas antes de exportar.
-
-### Exportación y Validación
-- Genera archivos `.txt` para cada concepto, separados por carpeta (`Procesamiento` / `Transporte`).
-- Valida si el archivo `.txt` ya existe antes de exportar.
-- Verifica estructura de datos y tipos de columnas.
-- Logging centralizado con niveles configurables (`DEBUG`, `INFO`, etc.).
-
-### Arquitectura
-- Separación de responsabilidades en módulos (`io`, `core`, `processors`).
-- Configuración mediante archivo `.env` para rutas dinámicas.
-- Diccionario de mapeos centralizado para transformacion de datos.
-- Historial de procesamiento en CSV para auditoría.
+- **Monitoreo Inteligente**: Detecta archivos nuevos (on_created) y actualizaciones de archivos existentes (on_modified).
+- **Portabilidad Total**: Ejecutable autónomo que no requiere instalación de Python ni librerías en el computador de destino.
+- **Servicio de Windows**: Integración con NSSM para ejecución ininterrumpida en segundo plano.
+- **Limpieza Avanzada**: Normalización de texto (sin tildes ni caracteres especiales) y validación estricta de tipos de datos.
 
 ---
 
-## Estructura del Proyecto
+## Arquitectura y Estructura
+
+El proyecto utiliza una arquitectura de rutas dinámicas que detecta si la aplicación corre como script o como ejecutable empaquetado, asegurando que los logs y configuraciones siempre se ubiquen junto a la aplicación.
 
 ```
 AetherCore2/
-├── main.py                          # Punto de entrada
-├── processors/
-│   └── xlsx_to_txt_converter.py     # Lógica principal de procesamiento
+├── main.py                          # Punto de entrada del monitor
+├── scripts/                         # Automatización de despliegue
+│   ├── install_service.bat          # Registro de servicio portátil
+│   └── uninstall_service.bat        # Eliminación del servicio
 ├── src/
-│   ├── core/
-│   │   ├── cleaning.py              # Limpieza básica de DataFrames
-│   │   ├── text_cleaner.py          # Limpieza avanzada: tildes y caracteres especiales
-│   │   ├── data_mappings.py         # Diccionario de mapeos origen -> destino
-│   │   ├── config.py                # Configuración y carga de .env
-│   │   ├── expected_columns.py      # Columnas requeridas por hoja
-│   │   ├── file_operations.py       # Orquestación general del flujo
-│   │   ├── history_log.py           # Registro histórico por archivo
-│   │   ├── logger_config.py         # Configuración de logger
-│   │   ├── monitor.py               # Monitoreo de la carpeta de entrada
-│   │   ├── schema_validator.py      # Validación estructural y crítica
-│   │   ├── tipos_columnas.py        # Tipos de datos por columna
-│   │   ├── validators.py            # Validadores específicos
-│   │   └── text_cleaner.py          # Limpiador de texto
-│   └── io/
-│       ├── formatter.py             # Transformación y limpieza de columnas
-│       ├── naming.py                # Generación de nombre de archivo final
-│       ├── pathing.py               # Rutas dinámicas de entrada/salida
-│       ├── reader.py                # Lectura de archivos Excel
-│       └── writer.py                # Exportación a .txt
-├── logs/                            # Carpeta donde se almacenan los logs
-├── .env.example                     # Plantilla de configuración
-├── requirements.txt                 # Librerías necesarias
-└── README.md                        # Este archivo
+│   ├── core/                        # Lógica de negocio y monitoreo
+│   └── io/                          # Lectura, escritura y formateo
+├── .env                             # Configuración de rutas locales
+└── logs/                            # Auditoría y trazabilidad
 ```
 
 ---
 
-## Procesamiento de Datos
+## Implementación y Despliegue
 
-AetherCore 2 implementa un sistema de procesamiento de datos en tres etapas:
+### Modo Portátil (Recomendado para Producción)
+Para entornos sin Python instalado:
 
-### 1. Mapeo de Datos (`data_mappings.py`)
-**Primera etapa del procesamiento** - Transforma valores de origen (Excel) a valores estándar de destino (TXT):
+1. **Compilación**: Generar el ejecutable usando PyInstaller:
+   ```bash
+   pyinstaller --onefile --windowed --name AetherCore2 main.py
+   ```
 
-- **Sistema centralizado**: Diccionario configurable por tipo de hoja y columna
-- **Comparación robusta**: Case-insensitive para mayor tolerancia a variaciones
-- **Auditable**: Registra en logs todas las transformaciones realizadas
-- **Preservación de datos**: Si no existe mapeo, mantiene el valor original
+2. **Preparación de Carpeta**: Colocar en una misma ubicación:
+   - AetherCore2.exe
+   - nssm.exe
+   - .env (configurado con las rutas del cliente)
 
-#### Ejemplo de Mapeos Actuales (PROCESAMIENTO - NOMBRE_TIPO_SERVICIO):
-```
-Origen (Excel)                           → Destino (TXT)
-─────────────────────────────────────────────────────────────
-ALMACENAMIENTO BILLETE                   → ALMACENAMIENTO
-ALMACENAMIENTO MONEDA                    → ALMACENAMIENTO
-CLASIFICACION EFECTIVO FAJADO (ALTA)     → CLASIFICACION
-CLASIFICACION EFECTIVO FAJADO (BAJA)     → CLASIFICACION
-VERIFICACION DE MONEDAS                  → VERIFICACION
-PAQUETEO BANCO REPUBLICA                 → PAQUETEO
-```
+3. **Instalación**: Ejecutar `scripts/install_service.bat` como Administrador.
 
-**Nota**: Los mapeos se aplican **antes** de cualquier limpieza de texto, permitiendo capturar valores con tildes o caracteres especiales exactamente como aparecen en el Excel.
+### Modo Desarrollo
+1. Instalar dependencias: `pip install -r requirements.txt`
+2. Ejecutar monitor: `python main.py`
+
+## Flujo de Procesamiento
+
+1. **Detección**: El sistema vigila la carpeta de entrada definida en `.env`.
+2. **Mapeo y Limpieza**: Aplica transformaciones de `data_mappings.py` y remueve caracteres no permitidos.
+3. **Validación**: Verifica esquemas y tipos de columnas críticas antes de exportar.
+4. **Exportación**: Genera archivos `.txt` en UTF-8 con la nomenclatura requerida por el cliente.
+5. **Historial**: Registra cada operación en `logs/historial_procesamiento.csv` para auditoría.
+
+## Mantenimiento
+
+- **Logs**: Consultar `logs/app.log` para depuración de la lógica y `service_stderr.log` para errores del servicio de Windows.
+- **Nomenclatura**: Los nombres de archivos siguen el formato estricto `LIQ_{TIPO}{TRANSPORTADORA}{BANCO}{DDMMAAAA}.txt`.
+- **Licencia**: MIT 2025 Hamir Rocha.
 
 ### 2. Limpieza Básica (`cleaning.py`)
 - Elimina espacios múltiples y caracteres invisibles (saltos de línea, tabs).
 - Normaliza valores nulos (`nan`, `NaN`, `None`, `NULL`).
 
-### 3. Limpieza Avanzada de Texto (`text_cleaner.py`)
 Aplica transformaciones específicas a columnas de texto:
 - **Eliminación de tildes y diacríticos**: "Bogotá" → "Bogota"
 - **Normalización Unicode**: Convierte caracteres especiales a ASCII
